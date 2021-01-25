@@ -1,0 +1,27 @@
+body{
+    background-color: #121212;
+}
+
+a{
+    text-decoration: none;
+}
+
+.has-success .form-control {
+    border: 2px solid #168b3f;
+}
+
+.has-danger .form-control {
+    border: 2px solid #dc1d34;
+}
+
+.form-group .text-help {
+    color: #dc1d34;
+}
+
+.centered {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);
+}

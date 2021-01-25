@@ -1,0 +1,15 @@
+<div
+  class="d-flex justify-content-center align-items-center"
+  style="height: 100vh;"
+>
+<div class="card p-5">
+  <% if (expressFlash.length > 0) { %>
+  <div class="alert alert-success"><%= expressFlash %></div>
+  <% } else { %>
+  <h2>Verifying Account</h2>
+  <div class="spinner-border text-success" role="status">
+  </div>
+  <% } %>
+</div>
+</div>
+<script src="js/verifyScript.js"></script>
