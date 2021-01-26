@@ -11,12 +11,14 @@ const {
 const CLIENT_URL = 'http://localhost:5000'
 
 module.exports.createUser = async (req, res) => {
-  let { firstName, lastName, email, password, city, gender, age } = req.body
+  let { firstName, lastName, email, password, country,state,city, gender, age } = req.body
   const { error } = await validateUser({
     firstName,
     lastName,
     email,
     password,
+    country,
+    state,
     city,
     gender,
     age,
@@ -45,6 +47,8 @@ module.exports.createUser = async (req, res) => {
     lastName,
     email,
     password,
+    country,
+    state,
     city,
     gender,
     age,

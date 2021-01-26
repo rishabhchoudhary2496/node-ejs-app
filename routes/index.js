@@ -15,6 +15,7 @@ module.exports = function (app) {
     res.render('SignUp', {
       title: 'SignUp',
       expressFlash: req.flash('errorMessage'),
+      layout: './layouts/SignUpLayout',
     })
   })
 

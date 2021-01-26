@@ -41,7 +41,7 @@ module.exports.sendVerificationEmail = async function (CLIENT_URL,token,user){
       const msg = {
         to: user.email,
         from: 'rishabh_choudhary@softprodigy.com', // Use the email address or domain you verified above
-        subject: '"Verification Email"',
+        subject: 'Verification Email',
         html: `<p>Please click the link below to activate your account</p><br><a href="${CLIENT_URL}/verifyAccount?token=${token}" target="_blank">${CLIENT_URL}/verifyAccount/token=${token}</a>`,
       }
       try {

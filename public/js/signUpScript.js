@@ -17,11 +17,13 @@ const sendSignUpRequest = async (formDataJsonString) => {
     signUpBtn.disabled = false
     signUpSpinner.style.display = 'none'
 
+    const data = await result.json()
     console.log(result.status)
     if (result.status == 200) {
       alert('Verification Email Sent')
       window.location.href = '/login'
     } else {
+      alert(data.error);
       window.location.reload();
     }
   } catch (error) {
@@ -54,12 +56,12 @@ window.onload = function () {
   //submitting sign up form
   form.addEventListener('submit', function (e) {
     e.preventDefault()
-    signUpBtn.disabled = true
-    signUpSpinner.style.display = 'block'
     const checkBox = document.querySelector('.form-check-input:checked').value
     // check if the form is valid
     const valid = pristine.validate() // returns true or false
     if (valid) {
+      signUpBtn.disabled = true
+      signUpSpinner.style.display = 'block'
       const formData = new FormData()
       for (let i = 0; i < form.length; i++) {
         formData.append(form[i].name, form[i].value)
@@ -72,6 +74,7 @@ window.onload = function () {
       const plainFormData = Object.fromEntries(formData.entries())
       const formDataJsonString = JSON.stringify(plainFormData)
 
+      console.log(formDataJsonString)
       //sending ajax request
       sendSignUpRequest(formDataJsonString);
 
