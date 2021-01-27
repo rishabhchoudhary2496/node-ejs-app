@@ -4,10 +4,21 @@ const {
   handleResetPassword,
   handleForgotPassword,
   getUsersData,
-  resendVerificationEmail
+  resendVerificationEmail,
+  getProfileData,
+  uploadProfilePic
 } = require('../controllers/userController')
 const passport = require('passport')
 const { isAuth,isUserVerified } = require('../middlewares/customMiddlewares.js')
+const multer = require('multer')
+const { storage } = require('../config/multerConfig')
+const upload = multer({
+  storage,
+  limits: { fileSize: 1024 * 1024 * 8 },
+})
+
+
+
 
 module.exports = function (app) {
   // sign up
@@ -98,4 +109,24 @@ module.exports = function (app) {
   })
 
   app.post('/resendVerificationEmail', isAuth, resendVerificationEmail)
+
+  //===profile==
+  app.get('/profile', isAuth, isUserVerified, getProfileData)
+
+
+
+  //upload pic page
+  app.get('/uploadProfilePic', isAuth, isUserVerified, (req, res) => {
+    res.render('UploadProfilePic', { title: 'Upload Profile Picture' })
+  })
+
+  //===== upload profile picture 
+
+  app.post(
+    '/uploadProfilePic',
+    isAuth,
+    isUserVerified,
+    upload.single('profilePic'),
+    uploadProfilePic
+  )
 }

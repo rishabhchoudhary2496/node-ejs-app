@@ -70,6 +70,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
+      profilePic:{
+        type:DataTypes.STRING
+      }
     },
     {
       sequelize,

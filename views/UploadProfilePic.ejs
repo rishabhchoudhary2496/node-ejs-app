@@ -1,0 +1,19 @@
+<div
+  class="d-flex justify-content-center align-items-center"
+  style="height: 100vh"
+>
+  <div class="card p-5">
+    <h3 class="text-center text-primary font-weight-bold mb-3">Upload Profile Picture</h3>
+    <form id="uploadPicForm" method="POST" enctype='multipart/form-data' class="form-container">
+    <div class="mb-3">
+            <img id="previewImg" src="" class="rounded-circle"></img>
+    </div>
+    <input type="file" name="profilePic" id="file"></input>
+        <div>
+            <button type="submit" class="btn btn-primary mt-4" id="upload-Btn">upload</button>
+        </div>
+    </form>
+  </div>
+</div>
+<script src="js/uploadPicture.js"></script>
+

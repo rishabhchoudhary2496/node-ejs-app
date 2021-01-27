@@ -39,9 +39,12 @@ app.use(flash())
 // })
 
 
+app.use('/public', express.static(path.resolve(__dirname, 'public')))
+
 app.use('/css', express.static('public/css'))
 app.use('/img', express.static('public/img'))
 app.use('/js', express.static('public/js'))
+app.use('/uploads', express.static('public/uploads'))
 app.set('view engine','ejs')
 app.set('views', path.join(__dirname, 'views'))
 app.set('layout', './layouts/FullWidthLayout')

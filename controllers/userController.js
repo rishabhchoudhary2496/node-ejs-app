@@ -8,6 +8,8 @@ const {
   sendResetPasswordEmail,
 } = require('../utils/generalUtils')
 
+
+
 const CLIENT_URL = 'http://localhost:5000'
 
 module.exports.createUser = async (req, res) => {
@@ -206,4 +208,34 @@ module.exports.resendVerificationEmail = async(req,res) => {
   const token = await generateToken({ uuid: user.uuid })
   sendVerificationEmail(CLIENT_URL, token, user)
   res.status(200).send('Verification email sent')
+}
+
+
+//get profile
+//============================
+module.exports.getProfileData = async(req,res) => {
+   const email = req.user.dataValues.email;
+   let user = await User.findOne({
+    where: {
+      email: email,
+    },
+  })
+
+  res.render('Profile',{title:'profile',user:user})
+}
+
+
+
+
+module.exports.uploadProfilePic = async (req,res) => {
+  const email = req.user.dataValues.email
+   let user = await User.findOne({
+     where: {
+       email: email,
+     },
+   })
+  
+  user.profilePic = req.file.path
+  user.save();
+  res.redirect('/profile')
 }

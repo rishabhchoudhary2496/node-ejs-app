@@ -25,3 +25,7 @@ a{
   /* bring your own prefixes */
   transform: translate(-50%, -50%);
 }
+
+.center-div{
+    margin:0 auto;
+}

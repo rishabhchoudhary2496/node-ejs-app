@@ -1,0 +1,33 @@
+<div class="card p-3 d-flex">
+    <h3 class="text-center text-primary mb-3">Profile</h3>
+    <div class='center-div'>
+        <img src="<%= user.profilePic %>" alt="img" class="rounded-circle" width="200" height="200">
+    </div>
+    <div class="row mt-3">
+      <% if (!user.profilePic) { %>
+       <a class="btn btn-primary" href="/uploadProfilePic">upload Profile Picture</a>
+      <% } %> 
+
+        <div class="col mt-3">
+            <p><strong>FirstName</strong></p>
+            <p><strong>LastName</strong></p>
+            <p><strong>Email</strong></p>
+            <p><strong>Country</strong></p>
+            <p><strong>State</strong></p>
+            <p><strong>City</strong></p>
+            <p><strong>Age</strong></p>
+            <p><strong>Gender</strong></p>
+        </div>
+        <div class="col mt-3">
+            <p><%= user.firstName %></p>
+            <p><%= user.lastName %></p>
+            <p><%= user.email %></p>
+            <p><%= user.country %></p>
+            <p><%= user.state %></p>
+            <p><%= user.city %></p>
+            <p><%= user.age %></p>
+            <p><%= user.gender %></p>
+        </div>
+    </div>
+</div>
+<script src="js/getProfileData.js"></script>
