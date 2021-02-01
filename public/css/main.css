@@ -1,5 +1,7 @@
 body{
     background-color: #121212;
+   padding: 0 !important;
+   margin: 0!important;
 }
 
 a{
@@ -28,4 +30,16 @@ a{
 
 .center-div{
     margin:0 auto;
+}
+
+.hide-reply-box{
+    display: none;
+}
+
+.show-reply-box{
+    display: block;
+}
+
+.navbar{
+    margin:0;
 }

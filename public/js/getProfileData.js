@@ -4,12 +4,10 @@ window.onload = async function () {
       method: 'GET',
       headers: {
         'Access-Control-Allow-Origin': '*',
-        // 'Content-Type': 'application/json',
       },
       
     })
-    const data = await result.json();
-    console.log('data');
+    // const data = await result.json();
 } catch (err) {
     console.log(err)
   }

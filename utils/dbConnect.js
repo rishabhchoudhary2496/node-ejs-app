@@ -1,4 +1,4 @@
-const authDB = async (sequelize) => {
+const dbConnect = async (sequelize) => {
   try {
     await sequelize.authenticate()
     console.log('Connection has been established successfully.')
@@ -7,5 +7,4 @@ const authDB = async (sequelize) => {
   }
 }
 
-
-module.exports = authDB
+module.exports = dbConnect

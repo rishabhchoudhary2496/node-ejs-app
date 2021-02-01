@@ -1,3 +1,5 @@
+const passport = require('passport')
+const multer = require('multer')
 const {
   createUser,
   verifyUser,
@@ -6,21 +8,21 @@ const {
   getUsersData,
   resendVerificationEmail,
   getProfileData,
-  uploadProfilePic
+  uploadProfilePic,
 } = require('../controllers/userController')
-const passport = require('passport')
-const { isAuth,isUserVerified } = require('../middlewares/customMiddlewares.js')
-const multer = require('multer')
+
+const { getReplies, postReply } = require('../controllers/replyController')
+const { postComment, getComments } = require('../controllers/commentController')
+
+const { isAuth, isUserVerified } = require('../utils/middlewares')
+
 const { storage } = require('../config/multerConfig')
 const upload = multer({
   storage,
   limits: { fileSize: 1024 * 1024 * 8 },
 })
 
-
-
-
-module.exports = function (app) {
+module.exports = function (app, wagner) {
   // sign up
   app.get('/signUp', (req, res) => {
     res.render('SignUp', {
@@ -63,8 +65,7 @@ module.exports = function (app) {
     )(req, res, next)
   })
 
-  //=================================
-  //verify account
+  //=========verifyAccount=============
 
   app.get('/verifyAccount', (req, res) => {
     res.render('verifyAccount', {
@@ -75,13 +76,11 @@ module.exports = function (app) {
 
   app.post('/verifyAccount', verifyUser)
 
-  //====================================
-  //forgot password
+  //========forgotPassword=============
 
   app.post('/forgotPassword', handleForgotPassword)
 
-  //=======================
-  //reset password
+  //==========reset password===============
 
   app.get('/resetPassword', (req, res) => {
     res.render('resetPassword', { title: 'reset password' })
@@ -89,38 +88,34 @@ module.exports = function (app) {
 
   app.post('/resetPassword', handleResetPassword)
 
-  //=============================
-  //logout
+  //=============logout===============
 
   app.get('/logout', (req, res) => {
     req.logout()
     res.redirect('/login')
   })
 
-  //==============================
-  //home
+  //================home==========================
 
-  app.get('/', isAuth, isUserVerified ,getUsersData)
+  app.get('/', isAuth, isUserVerified, getUsersData)
 
-  //==============
+  //==============resendVerfication====================
 
-  app.get('/resendVerificationEmail',(req,res) =>{
+  app.get('/resendVerificationEmail', (req, res) => {
     res.render('ResendVerificationEmail', { title: 'ResendVerificationEmail' })
   })
 
   app.post('/resendVerificationEmail', isAuth, resendVerificationEmail)
 
-  //===profile==
+  //===profile=====================
   app.get('/profile', isAuth, isUserVerified, getProfileData)
-
-
 
   //upload pic page
   app.get('/uploadProfilePic', isAuth, isUserVerified, (req, res) => {
     res.render('UploadProfilePic', { title: 'Upload Profile Picture' })
   })
 
-  //===== upload profile picture 
+  //===== upload profile picture=================
 
   app.post(
     '/uploadProfilePic',
@@ -129,4 +124,12 @@ module.exports = function (app) {
     upload.single('profilePic'),
     uploadProfilePic
   )
+
+  //=================comment=======================
+  app.post('/comment', isAuth, isUserVerified, postComment)
+  app.get('/comment', isAuth, isUserVerified, getComments)
+
+  //=================reply=========================
+  app.post('/reply', isAuth, isUserVerified, postReply)
+  app.get('/reply', isAuth, isUserVerified, getReplies)
 }
