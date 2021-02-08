@@ -37,7 +37,7 @@ app.use('/public', express.static(path.resolve(__dirname, 'public')))
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
 app.set('layout', './layouts/FullWidthLayout')
-require('./routes/index')(app, wagner)
+require('./routes')(app, wagner)
 
 const PORT = process.env.PORT || 5000
 
