@@ -7,11 +7,11 @@ const app = express()
 const flash = require('connect-flash')
 const { sequelize } = require('./models')
 const wagner = require('wagner-core')
+const passport = require('passport')
+require('./bootstrap.js')()
 const dbConnect = require('./utils/dbConnect')
 const SequelizeStore = require('connect-session-sequelize')(session.Store)
-const passport = require('passport')
-require('./config/passportConfig')(passport)
-require('./bootstrap.js')()
+require('./utils/passportConfig')(wagner)
 
 app.use(
   session({
@@ -37,7 +37,7 @@ app.use('/public', express.static(path.resolve(__dirname, 'public')))
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
 app.set('layout', './layouts/FullWidthLayout')
-require('./routes')(app, wagner)
+require('./routes/index')(app, wagner)
 
 const PORT = process.env.PORT || 5000
 

@@ -18,6 +18,8 @@ const isUserVerified = function (req, res, next) {
 const isLoggedIn = function (req, res, next) {
   if (req.isAuthenticated()) {
     res.redirect('/')
+  } else {
+    next()
   }
 }
 

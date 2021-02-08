@@ -1,6 +1,3 @@
-// const { Comment, User } = require('../models')
-const wagner = require('wagner-core')
-
 class CommentController {
   constructor(Comment, User, validateComment) {
     this.Comment = Comment

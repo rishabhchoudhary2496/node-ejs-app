@@ -1,17 +1,3 @@
-const passport = require('passport')
-const multer = require('multer')
-const UserController = require('../controllers/userController')
-
-const ReplyController = require('../controllers/replyController')
-const CommentController = require('../controllers/commentController')
-
-const { isAuth, isUserVerified, isLoggedIn } = require('../utils/middlewares')
-const { storage } = require('../config/multerConfig')
-const upload = multer({
-  storage,
-  limits: { fileSize: 1024 * 1024 * 8 },
-})
-
 module.exports = function (app, wagner) {
   wagner.invoke(
     (
@@ -26,7 +12,16 @@ module.exports = function (app, wagner) {
       decodeToken,
       sendVerificationEmail,
       sendResetPasswordEmail,
-      CLIENT_URL
+      CLIENT_URL,
+      passport,
+      multer,
+      isAuth,
+      isUserVerified,
+      isLoggedIn,
+      UserController,
+      ReplyController,
+      CommentController,
+      storage
     ) => {
       const userController = new UserController(
         User,
@@ -48,7 +43,7 @@ module.exports = function (app, wagner) {
         })
       })
 
-      app.post('/signUp', userController.createUser)
+      app.post('/signUp', isLoggedIn, userController.createUser)
 
       //=============login===============
 
@@ -132,6 +127,11 @@ module.exports = function (app, wagner) {
       //===== upload profile picture=================
       app.get('/uploadProfilePic', isAuth, isUserVerified, (req, res) => {
         res.render('UploadProfilePic', { title: 'Upload Profile Picture' })
+      })
+
+      const upload = multer({
+        storage,
+        limits: { fileSize: 1024 * 1024 * 8 },
       })
 
       app.post(
