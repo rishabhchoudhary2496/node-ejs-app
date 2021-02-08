@@ -1,17 +1,25 @@
-const wagner = require('wagner-core')
+class UserController {
+  constructor(
+    User,
+    validateUser,
+    generateToken,
+    verifyToken,
+    sendVerificationEmail,
+    decodeToken,
+    sendResetPasswordEmail,
+    CLIENT_URL
+  ) {
+    this.User = User
+    this.validateUser = validateUser
+    this.generateToken = generateToken
+    this.verifyToken = verifyToken
+    this.sendVerificationEmail = sendVerificationEmail
+    this.decodeToken = decodeToken
+    this.sendResetPasswordEmail = sendResetPasswordEmail
+    this.CLIENT_URL = CLIENT_URL
+  }
 
-const {
-  generateToken,
-  verifyToken,
-  sendVerificationEmail,
-  decodeToken,
-  sendResetPasswordEmail,
-} = require('../utils/generalUtils')
-
-const CLIENT_URL = 'http://localhost:5000'
-
-const createUser = async (req, res) => {
-  wagner.invoke(async (User, validateUser) => {
+  createUser = async (req, res) => {
     let {
       firstName,
       lastName,
@@ -23,7 +31,7 @@ const createUser = async (req, res) => {
       gender,
       age,
     } = req.body
-    const { error } = await validateUser({
+    const { error } = await this.validateUser({
       firstName,
       lastName,
       email,
@@ -40,7 +48,7 @@ const createUser = async (req, res) => {
       return res.status(400).json({ error: error?.details[0].message })
     }
 
-    let user = await User.findOne({
+    let user = await this.User.findOne({
       where: {
         email: email,
       },
@@ -53,9 +61,9 @@ const createUser = async (req, res) => {
         .json({ error: 'User with this email already exist' })
     }
 
-    password = await User.hashPassword(password)
+    password = await this.User.hashPassword(password)
 
-    user = await User.create({
+    user = await this.User.create({
       firstName,
       lastName,
       email,
@@ -69,33 +77,28 @@ const createUser = async (req, res) => {
 
     console.log('usr', user)
 
-    const token = await generateToken({ uuid: user.uuid })
+    const token = await this.generateToken({ uuid: user.uuid })
     console.log('token', token)
-    sendVerificationEmail(CLIENT_URL, token, user)
+    this.sendVerificationEmail(this.CLIENT_URL, token, user)
 
     console.log(user)
 
     res.status(200).json('signed up.Verification Email Sent')
-  })
-}
+  }
 
-//=============================================================
-//verify user
-
-const verifyUser = async (req, res) => {
-  wagner.invoke(async (User) => {
+  verifyUser = async (req, res) => {
     const { token } = req.body
     console.log('token', token)
     let decoded
 
     //trying to verify even token is not expired and decode it
     try {
-      decoded = await verifyToken(token)
+      decoded = await this.verifyToken(token)
       console.log('d', decoded)
     } catch (err) {
       if (err.name == 'TokenExpiredError') {
-        decoded = await decodeToken(req.body.token)
-        let user = await User.findOne({
+        decoded = await this.decodeToken(req.body.token)
+        let user = await this.User.findOne({
           where: {
             uuid: decoded.uuid,
           },
@@ -104,15 +107,15 @@ const verifyUser = async (req, res) => {
           return res.status(400).json({ message: 'invalid token' })
         }
 
-        const token = await generateToken({ uuid: user.uuid })
-        sendVerificationEmail(CLIENT_URL, token, user)
+        const token = await this.generateToken({ uuid: user.uuid })
+        this.sendVerificationEmail(this.CLIENT_URL, token, user)
         return res
           .status(400)
           .json({ message: 'Verification Link Expired.Sending New Link' })
       }
     }
 
-    let user = await User.findOne({
+    let user = await this.User.findOne({
       where: {
         uuid: decoded.uuid,
       },
@@ -126,11 +129,9 @@ const verifyUser = async (req, res) => {
     await user.save()
     req.flash('message', 'verification complete')
     return res.status(200).json({ message: 'verification complete' })
-  })
-}
+  }
 
-const handleForgotPassword = async (req, res) => {
-  wagner.invoke(async (User) => {
+  handleForgotPassword = async (req, res) => {
     const { email } = req.body
 
     if (!email) {
@@ -138,7 +139,7 @@ const handleForgotPassword = async (req, res) => {
       return res.status(400).json({ error: 'email id required' })
     }
 
-    let user = await User.findOne({
+    let user = await this.User.findOne({
       where: {
         email: email,
       },
@@ -149,14 +150,12 @@ const handleForgotPassword = async (req, res) => {
       return res.status(400).json({ error: "couldn't find your account" })
     }
 
-    const token = await generateToken({ uuid: user.uuid })
-    sendResetPasswordEmail(CLIENT_URL, token, user)
+    const token = await this.generateToken({ uuid: user.uuid })
+    this.sendResetPasswordEmail(this.CLIENT_URL, token, user)
     res.status(200).json({ message: 'reset password link sent' })
-  })
-}
+  }
 
-const handleResetPassword = async (req, res) => {
-  wagner.invoke(async (User) => {
+  handleResetPassword = async (req, res) => {
     let { password, token } = req.body
     console.log('password', password)
     console.log('token', token)
@@ -164,12 +163,12 @@ const handleResetPassword = async (req, res) => {
 
     //trying to verify even token is not expired and decode it
     try {
-      decoded = await verifyToken(token)
+      decoded = await this.verifyToken(token)
       console.log('d', decoded)
     } catch (err) {
       if (err.name == 'TokenExpiredError') {
-        decoded = await decodeToken(req.body.token)
-        let user = await User.findOne({
+        decoded = await this.decodeToken(req.body.token)
+        let user = await this.User.findOne({
           where: {
             uuid: decoded.uuid,
           },
@@ -178,52 +177,48 @@ const handleResetPassword = async (req, res) => {
           return res.status(400).json({ message: 'invalid token' })
         }
 
-        const token = await generateToken({ uuid: user.uuid })
-        sendResetPasswordEmail(CLIENT_URL, token, user)
+        const token = await this.generateToken({ uuid: user.uuid })
+        this.sendResetPasswordEmail(this.CLIENT_URL, token, user)
         return res
           .status(400)
           .json({ message: 'Reset Password Link Expired.Sending New Link' })
       }
     }
 
-    let user = await User.findOne({
+    let user = await this.User.findOne({
       where: {
         uuid: decoded.uuid,
       },
     })
 
     if (!user) return res.status(400).json({ message: 'invalid id' })
-    password = await User.hashPassword(password)
+    password = await this.User.hashPassword(password)
     user.password = password
     await user.save()
     return res.status(200).json({ message: 'password reset successfull' })
-  })
-}
+  }
 
-const getUsersData = async function (req, res) {
-  wagner.invoke(async (User) => {
-    const users = await User.findAll()
+  getUsersData = async (req, res) => {
+    const users = await this.User.findAll()
     res.render('home', {
       title: 'home',
       users: users,
       layout: './layouts/FullWidthLayoutLight',
     })
-  })
-}
+  }
 
-const resendVerificationEmail = async (req, res) => {
-  const user = req.user.dataValues
-  if (!user)
-    return res.status(400).json({ message: "couldn't find your account" })
-  const token = await generateToken({ uuid: user.uuid })
-  sendVerificationEmail(CLIENT_URL, token, user)
-  res.status(200).send('Verification email sent')
-}
+  resendVerificationEmail = async (req, res) => {
+    const user = req.user.dataValues
+    if (!user)
+      return res.status(400).json({ message: "couldn't find your account" })
+    const token = await this.generateToken({ uuid: user.uuid })
+    this.sendVerificationEmail(this.CLIENT_URL, token, user)
+    res.status(200).send('Verification email sent')
+  }
 
-const getProfileData = async (req, res) => {
-  wagner.invoke(async (User) => {
+  getProfileData = async (req, res) => {
     const email = req.user.dataValues.email
-    let user = await User.findOne({
+    let user = await this.User.findOne({
       where: {
         email: email,
       },
@@ -234,13 +229,11 @@ const getProfileData = async (req, res) => {
       user: user,
       layout: './layouts/FullWidthLayoutLight',
     })
-  })
-}
+  }
 
-const uploadProfilePic = async (req, res) => {
-  wagner.invoke(async (User) => {
+  uploadProfilePic = async (req, res) => {
     const email = req.user.dataValues.email
-    let user = await User.findOne({
+    let user = await this.User.findOne({
       where: {
         email: email,
       },
@@ -249,16 +242,7 @@ const uploadProfilePic = async (req, res) => {
     user.profilePic = req.file.path
     user.save()
     res.redirect('/profile')
-  })
+  }
 }
 
-module.exports = {
-  createUser,
-  verifyUser,
-  handleForgotPassword,
-  handleResetPassword,
-  getUsersData,
-  resendVerificationEmail,
-  getProfileData,
-  uploadProfilePic,
-}
+module.exports = UserController

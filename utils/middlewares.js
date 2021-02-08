@@ -1,4 +1,4 @@
-const isAuth = function name(req, res, next) {
+const isAuth = function (req, res, next) {
   if (req.isAuthenticated()) {
     next()
   } else {
@@ -15,4 +15,10 @@ const isUserVerified = function (req, res, next) {
   }
 }
 
-module.exports = {isAuth,isUserVerified}
+const isLoggedIn = function (req, res, next) {
+  if (req.isAuthenticated()) {
+    res.redirect('/')
+  }
+}
+
+module.exports = { isAuth, isUserVerified, isLoggedIn }

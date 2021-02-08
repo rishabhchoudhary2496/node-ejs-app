@@ -1,10 +1,15 @@
-const wagner = require('wagner-core')
+class ReplyController {
+  constructor(User, Comment, Reply, validateReply) {
+    this.User = User
+    this.Comment = Comment
+    this.Reply = Reply
+    this.validateReply = validateReply
+  }
 
-const postReply = async (req, res) => {
-  wagner.invoke(async (User, Comment, Reply, validateReply) => {
+  postReply = async (req, res) => {
     const { userUUID, commentUUID, reply } = req.body
 
-    const user = await User.findOne({
+    const user = await this.User.findOne({
       where: {
         uuid: userUUID,
       },
@@ -15,7 +20,7 @@ const postReply = async (req, res) => {
         .status(404)
         .json({ message: "user with this id doesn't exist" })
 
-    const comment = await Comment.findOne({
+    const comment = await this.Comment.findOne({
       where: {
         uuid: commentUUID,
       },
@@ -26,16 +31,15 @@ const postReply = async (req, res) => {
         .status(404)
         .json({ message: "comment with this id doesn't exist" })
 
-    const { error } = await validateReply({
+    const { error } = await this.validateReply({
       reply,
     })
 
     if (error) {
-      // req.flash('errorMessage', error?.details[0].message)
       return res.status(400).json({ error: error?.details[0].message })
     }
 
-    let userReply = await Reply.create({
+    let userReply = await this.Reply.create({
       reply: reply,
       userId: user.id,
       commentId: comment.id,
@@ -46,20 +50,18 @@ const postReply = async (req, res) => {
     } else {
       return res.status(500)
     }
-  })
-}
+  }
 
-const getReplies = async (req, res) => {
-  wagner.invoke(async (Reply, Comment, User) => {
-    const replies = await Reply.findAll({
+  getReplies = async (req, res) => {
+    const replies = await this.Reply.findAll({
       include: [
-        { model: User, as: 'user' },
-        { model: Comment, as: 'comment' },
+        { model: this.User, as: 'user' },
+        { model: this.Comment, as: 'comment' },
       ],
     })
 
     return res.status(200).json({ replies: replies })
-  })
+  }
 }
 
-module.exports = { postReply, getReplies }
+module.exports = ReplyController

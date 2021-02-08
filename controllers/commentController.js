@@ -1,11 +1,17 @@
 // const { Comment, User } = require('../models')
 const wagner = require('wagner-core')
 
-const postComment = async (req, res) => {
-  wagner.invoke(async (User, Comment, validateComment) => {
+class CommentController {
+  constructor(Comment, User, validateComment) {
+    this.Comment = Comment
+    this.User = User
+    this.validateComment = validateComment
+  }
+
+  postComment = async (req, res) => {
     const { uuid, comment } = req.body
 
-    const user = await User.findOne({
+    const user = await this.User.findOne({
       where: {
         uuid: uuid,
       },
@@ -16,16 +22,15 @@ const postComment = async (req, res) => {
         .status(404)
         .json({ message: "user with this id doesn't exist" })
 
-    const { error } = await validateComment({
+    const { error } = await this.validateComment({
       comment,
     })
 
     if (error) {
-      // req.flash('errorMessage', error?.details[0].message)
       return res.status(400).json({ error: error?.details[0].message })
     }
 
-    let userComment = await Comment.create({
+    let userComment = await this.Comment.create({
       comment: comment,
       userId: user.id,
     })
@@ -34,22 +39,16 @@ const postComment = async (req, res) => {
     } else {
       return res.status(500)
     }
-  })
-}
+  }
 
-const getComments = async (req, res) => {
-  wagner.invoke(async (Comment) => {
-    wagner.invoke(async (User) => {
-      let comments = await Comment.findAll({
-        include: [{ model: User, as: 'user' }],
-      })
-
-      return res.status(200).json({ comments: comments })
+  getComment = async (req, res) => {
+    console.log('this.comment', this)
+    let comments = await this.Comment.findAll({
+      include: [{ model: this.User, as: 'user' }],
     })
-  })
+
+    return res.status(200).json({ comments: comments })
+  }
 }
 
-module.exports = {
-  postComment,
-  getComments,
-}
+module.exports = CommentController
