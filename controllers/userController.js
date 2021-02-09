@@ -208,7 +208,6 @@ class UserController {
   }
 
   static getUsersData = async (req, res) => {
-    console.log('this', this)
     const users = await this.User.findAll()
     res.render('home', {
       title: 'home',
