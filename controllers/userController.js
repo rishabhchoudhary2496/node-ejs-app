@@ -1,5 +1,14 @@
 class UserController {
-  constructor(
+  static User
+  static validateUser
+  static generateToken
+  static verifyToken
+  static sendVerificationEmail
+  static decodeToken
+  static sendResetPasswordEmail
+  static CLIENT_URL
+
+  static setData(
     User,
     validateUser,
     generateToken,
@@ -19,7 +28,7 @@ class UserController {
     this.CLIENT_URL = CLIENT_URL
   }
 
-  createUser = async (req, res) => {
+  static createUser = async (req, res) => {
     let {
       firstName,
       lastName,
@@ -86,7 +95,7 @@ class UserController {
     res.status(200).json('signed up.Verification Email Sent')
   }
 
-  verifyUser = async (req, res) => {
+  static verifyUser = async (req, res) => {
     const { token } = req.body
     console.log('token', token)
     let decoded
@@ -131,7 +140,7 @@ class UserController {
     return res.status(200).json({ message: 'verification complete' })
   }
 
-  handleForgotPassword = async (req, res) => {
+  static handleForgotPassword = async (req, res) => {
     const { email } = req.body
 
     if (!email) {
@@ -155,7 +164,7 @@ class UserController {
     res.status(200).json({ message: 'reset password link sent' })
   }
 
-  handleResetPassword = async (req, res) => {
+  static handleResetPassword = async (req, res) => {
     let { password, token } = req.body
     console.log('password', password)
     console.log('token', token)
@@ -198,7 +207,8 @@ class UserController {
     return res.status(200).json({ message: 'password reset successfull' })
   }
 
-  getUsersData = async (req, res) => {
+  static getUsersData = async (req, res) => {
+    console.log('this', this)
     const users = await this.User.findAll()
     res.render('home', {
       title: 'home',
@@ -207,7 +217,7 @@ class UserController {
     })
   }
 
-  resendVerificationEmail = async (req, res) => {
+  static resendVerificationEmail = async (req, res) => {
     const user = req.user.dataValues
     if (!user)
       return res.status(400).json({ message: "couldn't find your account" })
@@ -216,7 +226,7 @@ class UserController {
     res.status(200).send('Verification email sent')
   }
 
-  getProfileData = async (req, res) => {
+  static getProfileData = async (req, res) => {
     const email = req.user.dataValues.email
     let user = await this.User.findOne({
       where: {
@@ -231,7 +241,7 @@ class UserController {
     })
   }
 
-  uploadProfilePic = async (req, res) => {
+  static uploadProfilePic = async (req, res) => {
     const email = req.user.dataValues.email
     let user = await this.User.findOne({
       where: {

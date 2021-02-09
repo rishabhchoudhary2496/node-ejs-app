@@ -23,7 +23,7 @@ module.exports = function (app, wagner) {
       CommentController,
       storage
     ) => {
-      const userController = new UserController(
+      UserController.setData(
         User,
         validateUser,
         generateToken,
@@ -43,7 +43,7 @@ module.exports = function (app, wagner) {
         })
       })
 
-      app.post('/signUp', isLoggedIn, userController.createUser)
+      app.post('/signUp', isLoggedIn, UserController.createUser)
 
       //=============login===============
 
@@ -89,11 +89,11 @@ module.exports = function (app, wagner) {
         })
       })
 
-      app.post('/verifyAccount', userController.verifyUser)
+      app.post('/verifyAccount', UserController.verifyUser)
 
       //========forgotPassword=============
 
-      app.post('/forgotPassword', userController.handleForgotPassword)
+      app.post('/forgotPassword', UserController.handleForgotPassword)
 
       //==========reset password===============
 
@@ -101,11 +101,11 @@ module.exports = function (app, wagner) {
         res.render('resetPassword', { title: 'reset password' })
       })
 
-      app.post('/resetPassword', userController.handleResetPassword)
+      app.post('/resetPassword', UserController.handleResetPassword)
 
       //================home==========================
 
-      app.get('/', isAuth, isUserVerified, userController.getUsersData)
+      app.get('/', isAuth, isUserVerified, UserController.getUsersData)
 
       //==============resendVerfication====================
 
@@ -118,11 +118,11 @@ module.exports = function (app, wagner) {
       app.post(
         '/resendVerificationEmail',
         isAuth,
-        userController.resendVerificationEmail
+        UserController.resendVerificationEmail
       )
 
       //===get profile=====================
-      app.get('/profile', isAuth, isUserVerified, userController.getProfileData)
+      app.get('/profile', isAuth, isUserVerified, UserController.getProfileData)
 
       //===== upload profile picture=================
       app.get('/uploadProfilePic', isAuth, isUserVerified, (req, res) => {
@@ -139,33 +139,24 @@ module.exports = function (app, wagner) {
         isAuth,
         isUserVerified,
         upload.single('profilePic'),
-        userController.uploadProfilePic
+        UserController.uploadProfilePic
       )
 
       //=================comment=======================
 
-      const commentController = new CommentController(
-        Comment,
-        User,
-        validateComment
-      )
+      CommentController.setData(Comment, User, validateComment)
       app.post(
         '/comment',
         isAuth,
         isUserVerified,
-        commentController.postComment
+        CommentController.postComment
       )
-      app.get('/comment', isAuth, isUserVerified, commentController.getComment)
+      app.get('/comment', isAuth, isUserVerified, CommentController.getComment)
 
       //=================reply=========================
-      const replyController = new ReplyController(
-        User,
-        Comment,
-        Reply,
-        validateReply
-      )
-      app.post('/reply', isAuth, isUserVerified, replyController.postReply)
-      app.get('/reply', isAuth, isUserVerified, replyController.getReplies)
+      ReplyController.setData(User, Comment, Reply, validateReply)
+      app.post('/reply', isAuth, isUserVerified, ReplyController.postReply)
+      app.get('/reply', isAuth, isUserVerified, ReplyController.getReplies)
     }
   )
 }

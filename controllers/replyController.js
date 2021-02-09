@@ -1,12 +1,17 @@
 class ReplyController {
-  constructor(User, Comment, Reply, validateReply) {
+  static User
+  static Comment
+  static Reply
+  static validateReply
+
+  static setData(User, Comment, Reply, validateReply) {
     this.User = User
     this.Comment = Comment
     this.Reply = Reply
     this.validateReply = validateReply
   }
 
-  postReply = async (req, res) => {
+  static postReply = async (req, res) => {
     const { userUUID, commentUUID, reply } = req.body
 
     const user = await this.User.findOne({
@@ -52,7 +57,7 @@ class ReplyController {
     }
   }
 
-  getReplies = async (req, res) => {
+  static getReplies = async (req, res) => {
     const replies = await this.Reply.findAll({
       include: [
         { model: this.User, as: 'user' },

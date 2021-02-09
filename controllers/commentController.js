@@ -1,11 +1,15 @@
 class CommentController {
-  constructor(Comment, User, validateComment) {
+  static Comment
+  static User
+  static validateComment
+
+  static setData(Comment, User, validateComment) {
     this.Comment = Comment
     this.User = User
     this.validateComment = validateComment
   }
 
-  postComment = async (req, res) => {
+  static postComment = async (req, res) => {
     const { uuid, comment } = req.body
 
     const user = await this.User.findOne({
@@ -38,7 +42,7 @@ class CommentController {
     }
   }
 
-  getComment = async (req, res) => {
+  static getComment = async (req, res) => {
     console.log('this.comment', this)
     let comments = await this.Comment.findAll({
       include: [{ model: this.User, as: 'user' }],
