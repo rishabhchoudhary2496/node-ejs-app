@@ -233,6 +233,7 @@ class UserController {
       },
     })
 
+    res.status(200)
     res.render('Profile', {
       title: 'profile',
       user: user,

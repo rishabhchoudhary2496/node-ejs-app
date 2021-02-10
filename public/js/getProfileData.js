@@ -5,10 +5,14 @@ window.onload = async function () {
       headers: {
         'Access-Control-Allow-Origin': '*',
       },
-      
     })
+
+    if (result.status === 200) {
+      window.location.reload()
+    }
+
     // const data = await result.json();
-} catch (err) {
+  } catch (err) {
     console.log(err)
   }
 }
