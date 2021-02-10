@@ -72,7 +72,6 @@ wagner.invoke(
     //=============logout===============
 
     router.get('/logout', (req, res) => {
-      console.log(req.url)
       req.logout()
       res.redirect('/login')
     })

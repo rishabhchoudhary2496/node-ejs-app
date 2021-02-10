@@ -84,26 +84,21 @@ class UserController {
       age,
     })
 
-    console.log('usr', user)
-
     const token = await this.generateToken({ uuid: user.uuid })
-    console.log('token', token)
-    this.sendVerificationEmail(this.CLIENT_URL, token, user)
 
-    console.log(user)
+    this.sendVerificationEmail(this.CLIENT_URL, token, user)
 
     res.status(200).json('signed up.Verification Email Sent')
   }
 
   static verifyUser = async (req, res) => {
     const { token } = req.body
-    console.log('token', token)
+
     let decoded
 
     //trying to verify even token is not expired and decode it
     try {
       decoded = await this.verifyToken(token)
-      console.log('d', decoded)
     } catch (err) {
       if (err.name == 'TokenExpiredError') {
         decoded = await this.decodeToken(req.body.token)
@@ -166,14 +161,12 @@ class UserController {
 
   static handleResetPassword = async (req, res) => {
     let { password, token } = req.body
-    console.log('password', password)
-    console.log('token', token)
+
     let decoded
 
     //trying to verify even token is not expired and decode it
     try {
       decoded = await this.verifyToken(token)
-      console.log('d', decoded)
     } catch (err) {
       if (err.name == 'TokenExpiredError') {
         decoded = await this.decodeToken(req.body.token)

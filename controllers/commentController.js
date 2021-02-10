@@ -43,7 +43,6 @@ class CommentController {
   }
 
   static getComment = async (req, res) => {
-    console.log('this.comment', this)
     let comments = await this.Comment.findAll({
       include: [{ model: this.User, as: 'user' }],
     })
